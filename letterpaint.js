@@ -30,6 +30,10 @@
   var pixels = 0;
   var letterpixels = 0;
 
+  //canvas 2
+  var can2 = document.createElement('canvas');
+  var cx2 = can2.getContext('2d');
+
   var originalLetterPixels = 0;
 
   /* Mouse and touch events */
@@ -110,9 +114,17 @@
              chars[parseInt(Math.random() * chars.length,10)];
     c.width = container.offsetWidth;
     c.height = container.offsetHeight;
+
+    can2.width = c.width;
+    can2.height = c.height;
+
     cx.font = 'bold ' + fontsize + 'px Open Sans';
     cx.fillStyle = 'rgb(' + textcolour.join(',') + ')';
     cx.strokeStyle = 'rgb(' + paintcolour.join(',') + ')';
+
+    cx2.fillStyle = 'rgb(' + textcolour.join(',') + ')';
+    cx2.strokeStyle = 'rgb(' + paintcolour.join(',') + ')';
+
     cx.shadowOffsetX = 2;
     cx.shadowOffsetY = 2;
     cx.shadowBlur = 4;
@@ -120,7 +132,7 @@
 
     cx.textBaseline = 'baseline';
     cx.lineWidth = linewidth;
-    cx.lineCap = 'round';
+    cx.lineCap = 'butt';//round';
     cx.fillText(
       letter,
       (c.width - cx.measureText(letter).width) / 2,
@@ -169,6 +181,36 @@
       showerror();
     } else {
 
+      
+
+      /*
+      //line2
+      cx2.beginPath();
+      cx2.globalCompositeOperation = "source-over";
+      cx2.strokeStyle = "rgba(11,11,11,0)";
+      cx2.lineWidth = 20;
+      if (oldx > 0 && oldy > 0) {
+        cx2.moveTo(oldx, oldy);
+      }
+      cx2.lineTo(rx, ry);
+      cx2.stroke();
+      cx2.closePath();*/
+
+      cx2.globalCompositeOperation = "destination-out";
+      cx2.strokeStyle = "rgba(240,240,240,1)";
+      cx2.lineWidth = 100;
+
+      cx2.beginPath();
+      if (oldx > 0 && oldy > 0) {
+        cx2.moveTo(oldx, oldy);
+      }
+      cx2.lineTo(rx, ry);
+      cx2.stroke();
+      cx2.closePath();
+
+      cx.drawImage(can2, 0, 0);
+
+
       // delete px instead of drawing a new line.
       cx.globalCompositeOperation = "destination-out";
       cx.strokeStyle = "rgba(240,240,240,1)";
@@ -181,6 +223,8 @@
       cx.lineTo(rx, ry);
       cx.stroke();
       cx.closePath();
+      
+
       oldx = rx;
       oldy = ry;
     }
@@ -209,7 +253,7 @@
       //   paintcolour[1],
       //   paintcolour[2]
       // ) / letterpixels > 0.35) {
-      if( getpixelamount(255,30,20) < 4000) { //(originalLetterPixels / getpixelamount(255,30,20) > 0.25) {
+      if( getpixelamount(255,30,20) < (originalLetterPixels * .15)) { //(originalLetterPixels / getpixelamount(255,30,20) > 0.25) {
        setstate('win');
        if (sound) {
          winsound.play();
@@ -250,6 +294,8 @@
     oldy = 0;
     mousedown = false;
     pixelthreshold();
+
+    
   }
   function onmousedown(ev) {
     ev.preventDefault();
