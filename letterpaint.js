@@ -30,6 +30,8 @@
   var pixels = 0;
   var letterpixels = 0;
 
+  var originalLetterPixels = 0;
+
   /* Mouse and touch events */
   var mousedown = false;
   var touched = false;
@@ -135,16 +137,24 @@
     cx.shadowBlur = 0;
     cx.shadowColor = '#333';
     setstate('play');
+
+
+    //dbg
+    console.log(getpixelamount(255,30,20));
+    originalLetterPixels = getpixelamount(255,30,20);
   }
 
   function getpixelamount(r, g, b) {
     var pixels = cx.getImageData(0, 0, c.width, c.height);
     var all = pixels.data.length;
     var amount = 0;
+    //console.log(pixels);
     for (i = 0; i < all; i += 4) {
       if (pixels.data[i] === r &&
           pixels.data[i+1] === g &&
           pixels.data[i+2] === b) {
+          //if(pixels.data[i] != 255) debugger;
+        //console.log(r,g,b);
         amount++;
       }
     }
@@ -158,6 +168,12 @@
     if( colour.r === 0 && colour.g === 0 && colour.b === 0) {
       showerror();
     } else {
+
+      // delete px instead of drawing a new line.
+      cx.globalCompositeOperation = "destination-out";
+      cx.strokeStyle = "rgba(240,240,240,1)";
+      cx.lineWidth = 100;
+
       cx.beginPath();
       if (oldx > 0 && oldy > 0) {
         cx.moveTo(oldx, oldy);
@@ -182,16 +198,26 @@
 
   function pixelthreshold() {
     if (state !== 'error') {
-      if (getpixelamount(
-        paintcolour[0],
-        paintcolour[1],
-        paintcolour[2]
-      ) / letterpixels > 0.35) {
+
+      console.log("GPA: ", parseInt(originalLetterPixels) - parseInt(getpixelamount(255,30,20)));
+      
+      console.log(originalLetterPixels, 
+        parseInt(getpixelamount(255,30,20)));
+
+      // if (getpixelamount(
+      //   paintcolour[0],
+      //   paintcolour[1],
+      //   paintcolour[2]
+      // ) / letterpixels > 0.35) {
+      if( getpixelamount(255,30,20) < 4000) { //(originalLetterPixels / getpixelamount(255,30,20) > 0.25) {
        setstate('win');
        if (sound) {
          winsound.play();
        }
       }
+      //dbg
+
+      console.log(getpixelamount(255,30,20));
     }
   }
 
